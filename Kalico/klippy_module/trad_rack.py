@@ -488,6 +488,11 @@ class TradRack:
             self.cmd_TR_PRINT_TOOL_GROUPS,
             desc=self.cmd_TR_PRINT_TOOL_GROUPS_help,
         )
+        self.gcode.register_command(
+            "TR_QUERY_LANE_ENTRY_SENSORS",
+            self.cmd_TR_QUERY_LANE_ENTRY_SENSORS,
+            desc=self.cmd_TR_QUERY_LANE_ENTRY_SENSORS_help,
+        )
         if register_toolchange_commands:
             for i in range(self.lane_count):
                 self.gcode.register_command(
@@ -1213,6 +1218,13 @@ class TradRack:
                 msg += " (default: {})".format(self.default_lanes[tool])
             msg += "\n"
         gcmd.respond_info(msg)
+
+    cmd_TR_QUERY_LANE_ENTRY_SENSORS_help = "Query the status of the lane entry sensors"
+    def cmd_TR_QUERY_LANE_ENTRY_SENSORS(self, gcmd):
+        triggered_sensors = self._get_lane_entry_sensors_active()
+        gcmd.respond_info(
+            "Lane entry sensors status: "
+        )
 
     # helper functions
     def _lower_servo(self, toolhead_dwell=False):
@@ -2631,6 +2643,7 @@ class TradRack:
             "next_tool": self.next_tool,
             "tool_map": self.tool_map,
             "selector_homed": self._is_selector_homed(),
+            "lane_entry_sensors": self._get_lane_entry_sensors_active()
         }
 
 
